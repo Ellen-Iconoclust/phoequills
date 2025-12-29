@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phoequills | The Writing Studio</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- Cinzel for Brand, Bangers for Comic Headings, Merriweather for Reading, Patrick Hand for Notes -->
+    <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Cinzel:wght@700;900&family=Merriweather:ital,wght@0,300;0,700;1,300&family=Patrick+Hand&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'ink-black': '#1a1a1a',
+                        'paper-white': '#fdfbf7',
+                        'comic-yellow': '#ffde34',
+                        'comic-pink': '#ff90e8',
+                        'comic-cyan': '#23f0c7',
+                        'shadow-love': '#b30059'
+                    },
+                    fontFamily: {
+                        'brand': ['Cinzel', 'serif'],
+                        'comic': ['Bangers', 'cursive'],
+                        'body': ['Merriweather', 'serif'],
+                        'hand': ['Patrick Hand', 'cursive'],
+                    },
+                    boxShadow: {
+                        'hard': '6px 6px 0px 0px #1a1a1a',
+                        'hard-hover': '2px 2px 0px 0px #1a1a1a',
+                        'hard-reverse': '-6px 6px 0px 0px #1a1a1a',
+                    },
+                    backgroundImage: {
+                        'halftone': 'radial-gradient(#1a1a1a 1px, transparent 1px)'
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #fdfbf7;
+            background-size: 20px 20px;
+            background-image: radial-gradient(#d1d5db 1px, transparent 1px);
+        }
+
+        /* Comic Panel Borders */
+        .comic-panel {
+            border: 3px solid #1a1a1a;
+            background-color: white;
+            position: relative;
+        }
+
+        .speech-bubble {
+            position: relative;
+            background: #fff;
+            border: 3px solid #1a1a1a;
+            border-radius: .4em;
+        }
+
+        .speech-bubble:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 20%;
+            width: 0;
+            height: 0;
+            border: 20px solid transparent;
+            border-top-color: #1a1a1a;
+            border-bottom: 0;
+            border-left: 0;
+            margin-left: -10px;
+            margin-bottom: -20px;
+        }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 12px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #fdfbf7;
+            border-left: 2px solid #1a1a1a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1a1a1a;
+            border: 2px solid #fdfbf7;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #b30059;
+        }
+
+        .rotate-hover:hover {
+            transform: rotate(-2deg) scale(1.02);
+        }
+        
+        .tilt-right { transform: rotate(2deg); }
+        .tilt-left { transform: rotate(-2deg); }
+
+        /* Animation for Reader Overlay */
+        .reader-enter {
+            animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        @keyframes slideUp {
+            from { transform: translateY(100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+    </style>
+</head>
+<body class="text-ink-black font-body overflow-x-hidden">
+
+    <!-- Navbar -->
+    <nav class="fixed top-0 w-full z-50 bg-paper-white border-b-4 border-ink-black py-4 px-6">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <a href="#" class="font-brand text-3xl font-black tracking-wider hover:text-shadow-love transition-colors">
+                PHOEQUILLS
+            </a>
+            
+            <!-- Desktop Menu -->
+            <div class="hidden md:flex gap-8 font-comic text-xl tracking-wide">
+                <a href="#studio" class="hover:text-comic-pink transition-transform hover:-translate-y-1">THE STUDIO</a>
+                <a href="#series-drop" class="hover:text-comic-cyan transition-transform hover:-translate-y-1">SERIES DROP</a>
+                <a href="#featured" class="hover:text-shadow-love transition-transform hover:-translate-y-1">SHADOW LOVE</a>
+                <a href="#commissions" class="hover:text-comic-yellow transition-transform hover:-translate-y-1">ORDER NOW</a>
+            </div>
+
+            <!-- Mobile Menu Button -->
+            <button id="menuBtn" class="md:hidden text-2xl border-2 border-black p-1 shadow-hard active:shadow-none active:translate-x-[4px] active:translate-y-[4px] transition-all">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+        
+        <!-- Mobile Menu Dropdown -->
+        <div id="mobileMenu" class="hidden md:hidden absolute top-full left-0 w-full bg-paper-white border-b-4 border-black p-4 flex-col gap-4 font-comic text-xl shadow-xl">
+            <a href="#studio" class="block border-b-2 border-dashed border-gray-300 pb-2">THE STUDIO</a>
+            <a href="#series-drop" class="block border-b-2 border-dashed border-gray-300 pb-2">SERIES DROP</a>
+            <a href="#featured" class="block border-b-2 border-dashed border-gray-300 pb-2">SHADOW LOVE</a>
+            <a href="#commissions" class="block">ORDER NOW</a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="mt-24 min-h-[80vh] flex items-center justify-center p-6 relative overflow-hidden">
+        <!-- Background Elements -->
+        <div class="absolute top-10 right-10 text-9xl text-comic-yellow opacity-20 font-comic rotate-12 select-none">POW!</div>
+        <div class="absolute bottom-20 left-10 text-8xl text-comic-cyan opacity-20 font-comic -rotate-12 select-none">INK!</div>
+
+        <div class="max-w-6xl w-full grid md:grid-cols-2 gap-12 items-center relative z-10">
+            <div class="space-y-6">
+                <div class="inline-block bg-black text-white px-4 py-1 font-comic text-lg transform -rotate-2">
+                    EST. 2024 • WRITING & ART
+                </div>
+                <h1 class="font-comic text-7xl md:text-8xl leading-[0.9]">
+                    WEAVING <br>
+                    <span class="text-stroke text-transparent bg-clip-text bg-gradient-to-r from-comic-pink to-shadow-love" style="-webkit-text-stroke: 3px black;">STORIES</span> <br>
+                    FROM SHADOWS
+                </h1>
+                <p class="font-hand text-2xl md:text-3xl max-w-md transform rotate-1 bg-comic-yellow/30 p-2">
+                    "Where every word is a stroke of ink and every chapter a new dimension."
+                </p>
+                <div class="pt-4 flex gap-4">
+                    <a href="#series-drop" class="bg-ink-black text-white font-comic text-2xl px-8 py-3 border-2 border-black shadow-hard hover:shadow-hard-hover hover:translate-x-[4px] hover:translate-y-[4px] transition-all">
+                        READ NOW
+                    </a>
+                    <a href="#commissions" class="bg-paper-white text-ink-black font-comic text-2xl px-8 py-3 border-2 border-black shadow-hard hover:bg-comic-cyan hover:shadow-hard-hover hover:translate-x-[4px] hover:translate-y-[4px] transition-all">
+                        GET A COPY
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Hero Image / Panel -->
+            <div class="relative comic-panel p-4 shadow-hard tilt-left">
+                <img src="https://images.unsplash.com/photo-1519791883288-dc8bd696e667?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Writing Desk" class="w-full h-[400px] object-cover grayscale contrast-125 border-2 border-black">
+                <div class="absolute -bottom-6 -right-6 bg-comic-pink border-2 border-black p-4 shadow-hard rotate-3">
+                    <p class="font-comic text-xl text-center leading-tight">FEATURED:<br>SHADOW LOVE</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- The Studio / About -->
+    <section id="studio" class="py-20 px-6 bg-white border-y-4 border-black relative">
+        <div class="max-w-5xl mx-auto text-center mb-16">
+            <h2 class="font-comic text-6xl mb-4"><span class="bg-comic-cyan px-2 border-2 border-black shadow-md transform -skew-x-12 inline-block">THE STUDIO</span></h2>
+            <p class="font-body text-xl max-w-2xl mx-auto">The creative headquarters where ideas transform into ink.</p>
+        </div>
+
+        <div class="max-w-6xl mx-auto grid md:grid-cols-3 gap-8">
+            <!-- Panel 1 -->
+            <div class="comic-panel p-6 shadow-hard rotate-hover transition-all">
+                <div class="h-12 w-12 bg-black text-white rounded-full flex items-center justify-center text-2xl mb-4 border-2 border-black">
+                    <i class="fas fa-pen-nib"></i>
+                </div>
+                <h3 class="font-comic text-3xl mb-2">Novel Writing</h3>
+                <p>Crafting immersive worlds and complex characters that leap off the page. From romance to dark fantasy.</p>
+            </div>
+            <!-- Panel 2 -->
+            <div class="comic-panel p-6 shadow-hard rotate-hover transition-all bg-comic-yellow/10">
+                <div class="h-12 w-12 bg-comic-pink text-black rounded-full flex items-center justify-center text-2xl mb-4 border-2 border-black">
+                    <i class="fas fa-book-open"></i>
+                </div>
+                <h3 class="font-comic text-3xl mb-2">Short Stories</h3>
+                <p>Bite-sized narratives perfect for the modern reader. Quick bursts of emotion and plot twists.</p>
+            </div>
+            <!-- Panel 3 -->
+            <div class="comic-panel p-6 shadow-hard rotate-hover transition-all">
+                <div class="h-12 w-12 bg-white text-black rounded-full flex items-center justify-center text-2xl mb-4 border-2 border-black">
+                    <i class="fas fa-feather"></i>
+                </div>
+                <h3 class="font-comic text-3xl mb-2">Poetry</h3>
+                <p>Rhythmic expressions of the soul. Where silence meets the sound of words.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Series Drop (The "New Page" Experience) -->
+    <section id="series-drop" class="py-24 px-6 bg-comic-pink/10 relative">
+        <div class="absolute top-0 left-0 w-full h-full opacity-10" style="background-image: radial-gradient(#000 2px, transparent 2px); background-size: 20px 20px;"></div>
+        
+        <div class="max-w-7xl mx-auto relative z-10">
+            <div class="flex flex-col md:flex-row justify-between items-end mb-12 border-b-4 border-black pb-4">
+                <div>
+                    <span class="font-comic text-xl bg-black text-white px-2 py-1">WEEKLY UPDATES</span>
+                    <h2 class="font-comic text-6xl mt-2">SERIES DROP</h2>
+                </div>
+                <p class="font-hand text-2xl transform rotate-2 mt-4 md:mt-0">Click a cover to read the issue!</p>
+            </div>
+
+            <!-- Manga Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                
+                <!-- Issue 1 -->
+                <div class="group cursor-pointer" onclick="openReader('shadows')">
+                    <div class="relative aspect-[2/3] border-4 border-black bg-white shadow-hard group-hover:shadow-hard-hover group-hover:translate-x-[4px] group-hover:translate-y-[4px] transition-all overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1478720568477-152d9b164e63?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500" alt="Cover">
+                        <div class="absolute top-2 left-2 bg-comic-yellow border-2 border-black px-2 font-comic text-sm">ISSUE #01</div>
+                        <div class="absolute bottom-0 w-full bg-black/90 text-white p-4 transform translate-y-full group-hover:translate-y-0 transition-transform">
+                            <h3 class="font-comic text-xl text-comic-cyan">The Quiet Roar</h3>
+                            <p class="text-xs font-body">A silence that speaks volumes.</p>
+                        </div>
+                    </div>
+                    <h3 class="font-comic text-2xl mt-4 text-center group-hover:text-shadow-love">The Quiet Roar</h3>
+                </div>
+
+                <!-- Issue 2 -->
+                <div class="group cursor-pointer" onclick="openReader('neon')">
+                    <div class="relative aspect-[2/3] border-4 border-black bg-white shadow-hard group-hover:shadow-hard-hover group-hover:translate-x-[4px] group-hover:translate-y-[4px] transition-all overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1515462277126-2dd0c162007a?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500" alt="Cover">
+                        <div class="absolute top-2 left-2 bg-comic-cyan border-2 border-black px-2 font-comic text-sm">ISSUE #02</div>
+                        <div class="absolute bottom-0 w-full bg-black/90 text-white p-4 transform translate-y-full group-hover:translate-y-0 transition-transform">
+                            <h3 class="font-comic text-xl text-comic-pink">Neon Melancholy</h3>
+                            <p class="text-xs font-body">Love in a digital age.</p>
+                        </div>
+                    </div>
+                    <h3 class="font-comic text-2xl mt-4 text-center group-hover:text-shadow-love">Neon Melancholy</h3>
+                </div>
+
+                <!-- Issue 3 -->
+                <div class="group cursor-pointer" onclick="openReader('clockwork')">
+                    <div class="relative aspect-[2/3] border-4 border-black bg-white shadow-hard group-hover:shadow-hard-hover group-hover:translate-x-[4px] group-hover:translate-y-[4px] transition-all overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1500462918059-b1a0cb512f1d?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500" alt="Cover">
+                        <div class="absolute top-2 left-2 bg-comic-pink border-2 border-black px-2 font-comic text-sm">ISSUE #03</div>
+                        <div class="absolute bottom-0 w-full bg-black/90 text-white p-4 transform translate-y-full group-hover:translate-y-0 transition-transform">
+                            <h3 class="font-comic text-xl text-comic-yellow">Clockwork Heart</h3>
+                            <p class="text-xs font-body">Can machines feel pain?</p>
+                        </div>
+                    </div>
+                    <h3 class="font-comic text-2xl mt-4 text-center group-hover:text-shadow-love">Clockwork Heart</h3>
+                </div>
+
+                 <!-- Coming Soon -->
+                 <div class="group">
+                    <div class="relative aspect-[2/3] border-4 border-dashed border-gray-400 bg-gray-100 flex items-center justify-center">
+                        <div class="text-center transform -rotate-12">
+                            <h3 class="font-comic text-4xl text-gray-400">COMING<br>SOON</h3>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Book: Shadow Love -->
+    <section id="featured" class="py-24 px-6 bg-ink-black text-paper-white relative overflow-hidden">
+        <!-- Decoration -->
+        <div class="absolute -right-20 -top-20 w-96 h-96 bg-shadow-love rounded-full opacity-20 blur-3xl"></div>
+        <div class="absolute -left-20 -bottom-20 w-96 h-96 bg-comic-yellow rounded-full opacity-10 blur-3xl"></div>
+
+        <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-16 items-center relative z-10">
+            <!-- Book Cover Art -->
+            <div class="relative group">
+                <div class="absolute inset-0 bg-shadow-love transform rotate-3 border-2 border-white rounded-sm"></div>
+                <div class="relative comic-panel border-white bg-gradient-to-br from-gray-800 to-black p-8 text-center aspect-[2/3] flex flex-col justify-center items-center shadow-2xl transform transition-transform group-hover:-rotate-2">
+                    <h2 class="font-brand text-4xl text-comic-yellow mb-2">Shadow Love</h2>
+                    <div class="w-16 h-1 bg-white mb-6"></div>
+                    <p class="text-gray-300 font-body italic mb-8">"We grew into it, slowly, like vines climbing a wall..."</p>
+                    <div class="absolute bottom-4 right-4">
+                        <i class="fas fa-heart text-shadow-love animate-pulse"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content -->
+            <div>
+                <div class="inline-block bg-comic-yellow text-black font-comic px-3 py-1 mb-4 transform -rotate-2">BEST SELLER</div>
+                <h2 class="font-brand text-5xl md:text-6xl text-white mb-6">SHADOW LOVE</h2>
+                
+                <div class="space-y-6 font-body text-lg text-gray-300">
+                    <p>
+                        A poignant tale of two souls who find each other in the darkest moments. 
+                        Inspired by true events, this novel captures the raw emotion and real connection 
+                        that forms when two broken people help each other heal.
+                    </p>
+                    <div class="border-l-4 border-shadow-love pl-4 py-2 my-6 bg-white/5">
+                        <p class="italic text-white">"Our love wasn't perfect. It was messy and complicated. But it was real - the most real thing either of us had ever known."</p>
+                    </div>
+                    <p>
+                        <strong>The Protagonist:</strong> A wealthy student using money to mask emptiness.<br>
+                        <strong>The Muse:</strong> A brave girl fighting emotional demons.
+                    </p>
+                </div>
+
+                <div class="mt-8 flex items-center gap-6">
+                    <div>
+                        <span class="text-red-400 line-through text-lg">₹250</span>
+                        <span class="text-comic-cyan text-4xl font-comic ml-2">₹175</span>
+                    </div>
+                    <a href="#commissions" class="bg-shadow-love text-white font-comic text-2xl px-8 py-3 border-2 border-white shadow-[4px_4px_0px_0px_white] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_white] transition-all">
+                        BUY NOW
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Order Section (Formspree) -->
+    <section id="commissions" class="py-24 px-6 bg-comic-cyan">
+        <div class="max-w-4xl mx-auto">
+            <div class="comic-panel p-8 md:p-12 shadow-hard bg-paper-white relative">
+                <!-- Tape effect -->
+                <div class="absolute -top-3 left-1/2 transform -translate-x-1/2 w-32 h-8 bg-yellow-200/80 rotate-1 shadow-sm"></div>
+
+                <div class="text-center mb-10">
+                    <h2 class="font-comic text-5xl mb-2">ORDER & COMMISSIONS</h2>
+                    <p class="font-hand text-2xl text-gray-600">Fill out the slip below to get your copy or request a story.</p>
+                </div>
+
+                <!-- Formspree Form -->
+                <!-- REPLACE 'YOUR_FORM_ID' WITH YOUR ACTUAL FORMSPREE ID -->
+                <form action="https://formspree.io/f/YOUR_FORM_ID" method="POST" class="space-y-6">
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="space-y-2">
+                            <label class="font-comic text-xl">CODENAME (NAME)</label>
+                            <input type="text" name="name" required class="w-full bg-gray-50 border-2 border-black p-3 font-body focus:outline-none focus:bg-yellow-50 focus:shadow-hard-hover transition-all">
+                        </div>
+                        <div class="space-y-2">
+                            <label class="font-comic text-xl">CONTACT FREQUENCY (EMAIL)</label>
+                            <input type="email" name="email" required class="w-full bg-gray-50 border-2 border-black p-3 font-body focus:outline-none focus:bg-yellow-50 focus:shadow-hard-hover transition-all">
+                        </div>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="font-comic text-xl">MISSION OBJECTIVE (SELECT ONE)</label>
+                        <select name="type" class="w-full bg-gray-50 border-2 border-black p-3 font-body focus:outline-none focus:bg-yellow-50 transition-all appearance-none cursor-pointer">
+                            <option value="Shadow Love Book">Order "Shadow Love" Book (₹175)</option>
+                            <option value="Short Story Commission">Short Story Commission</option>
+                            <option value="Poetry Commission">Poetry Commission</option>
+                            <option value="Other">Just saying Hi!</option>
+                        </select>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="font-comic text-xl">DETAILS / ADDRESS</label>
+                        <textarea name="message" rows="4" required class="w-full bg-gray-50 border-2 border-black p-3 font-body focus:outline-none focus:bg-yellow-50 focus:shadow-hard-hover transition-all" placeholder="If ordering a book, please include your shipping address here..."></textarea>
+                    </div>
+
+                    <button type="submit" class="w-full bg-black text-white font-comic text-3xl py-4 border-2 border-black hover:bg-comic-yellow hover:text-black transition-colors shadow-hard hover:shadow-hard-hover hover:translate-x-[4px] hover:translate-y-[4px]">
+                        SEND TRANSMISSION
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-ink-black text-white border-t-4 border-white py-12 px-6">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
+            <div class="text-center md:text-left">
+                <a href="#" class="font-brand text-3xl block mb-2">PHOEQUILLS</a>
+                <p class="font-body text-gray-400 text-sm">© 2025 The Inkverse. All rights reserved.</p>
+            </div>
+            
+            <div class="flex gap-6">
+                <a href="https://instagram.com/pravin_s_elisa" target="_blank" class="w-12 h-12 flex items-center justify-center border-2 border-white rounded-full hover:bg-white hover:text-black transition-all">
+                    <i class="fab fa-instagram text-xl"></i>
+                </a>
+                <a href="https://twitter.com/ellenicon_writes" target="_blank" class="w-12 h-12 flex items-center justify-center border-2 border-white rounded-full hover:bg-white hover:text-black transition-all">
+                    <i class="fab fa-twitter text-xl"></i>
+                </a>
+                <a href="https://wattpad.com/user/Phoequills" target="_blank" class="w-12 h-12 flex items-center justify-center border-2 border-white rounded-full hover:bg-white hover:text-black transition-all">
+                    <i class="fab fa-wattpad text-xl"></i>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- READER OVERLAY (Hidden by default) -->
+    <div id="readerOverlay" class="fixed inset-0 z-[100] bg-black/90 hidden flex-col items-center justify-center p-4">
+        <button onclick="closeReader()" class="absolute top-6 right-6 text-white text-4xl hover:text-comic-pink transition-colors">
+            <i class="fas fa-times"></i>
+        </button>
+        
+        <div class="bg-paper-white w-full max-w-3xl h-[85vh] overflow-y-auto rounded-sm border-4 border-white reader-enter relative">
+            
+            <!-- Dynamic Content gets injected here -->
+            <div id="readerContent" class="p-8 md:p-12">
+                <!-- Placeholder content -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        // Data for the Series Drop Reader
+        const stories = {
+            'shadows': {
+                title: "The Quiet Roar",
+                content: `
+                    <h1 class="font-comic text-5xl mb-6 text-center">THE QUIET ROAR</h1>
+                    <div class="w-full h-1 bg-black mb-8"></div>
+                    <div class="font-body text-lg leading-relaxed space-y-6">
+                        <p>The city didn't sleep; it merely blinked. In the spaces between the neon flickers, I found him standing there.</p>
+                        <p>He wasn't saying anything. He didn't have to. The rain was doing enough talking for the both of us, drumming against the metal awning of the convenience store like a nervous finger tapping on a desk.</p>
+                        <p>"You're late," he finally whispered.</p>
+                        <p>I looked at my watch. It was broken, the hands frozen at 3:15. "I know," I lied.</p>
+                        <p class="font-bold font-brand text-xl text-center my-8">~ * ~</p>
+                        <p>That was how it always started with us. A lie, a truth, and the silence in between.</p>
+                        <br>
+                        <div class="bg-gray-100 p-6 border-l-4 border-black italic">
+                            This story is a preview. To read the full chapter, please subscribe to the weekly newsletter!
+                        </div>
+                    </div>
+                `
+            },
+            'neon': {
+                title: "Neon Melancholy",
+                content: `
+                    <h1 class="font-comic text-5xl mb-6 text-center text-comic-pink">NEON MELANCHOLY</h1>
+                    <div class="w-full h-1 bg-black mb-8"></div>
+                    <div class="font-body text-lg leading-relaxed space-y-6">
+                        <p>The screen glowed blue against her pale skin. It was the only light in the apartment.</p>
+                        <p>She typed: <em>"Are you real?"</em></p>
+                        <p>The three dots danced. A waltz of anticipation. Then, the text appeared: <em>"Does it matter?"</em></p>
+                        <p>She sighed, leaning back into the worn cushions of her sofa. Outside, the cyber-drones buzzed past the window, delivering late-night noodles to people too tired to cook and too lonely to go out.</p>
+                        <br>
+                        <p>She wanted to say yes. She wanted to scream that it mattered more than anything. But in a world where memories could be uploaded to the cloud, reality was just another subscription service.</p>
+                    </div>
+                `
+            },
+            'clockwork': {
+                title: "Clockwork Heart",
+                content: `
+                    <h1 class="font-comic text-5xl mb-6 text-center text-comic-yellow">CLOCKWORK HEART</h1>
+                    <div class="w-full h-1 bg-black mb-8"></div>
+                    <div class="font-body text-lg leading-relaxed space-y-6">
+                        <p>Tick. Tock. Tick. Tock.</p>
+                        <p>The doctor adjusted his spectacles. "It's a fine piece of machinery, son. The gears are pure brass. It won't break like the fleshy ones do."</p>
+                        <p>I touched my chest. Cold. Hard. Vibrating.</p>
+                        <p>"Will I still feel?" I asked.</p>
+                        <p>The doctor smiled, a tight, grim expression. "You'll feel what we program you to feel. And isn't that better than the chaos of before?"</p>
+                    </div>
+                `
+            }
+        };
+
+        // Reader Logic
+        function openReader(storyId) {
+            const overlay = document.getElementById('readerOverlay');
+            const contentDiv = document.getElementById('readerContent');
+            const body = document.body;
+
+            if (stories[storyId]) {
+                contentDiv.innerHTML = stories[storyId].content;
+                overlay.classList.remove('hidden');
+                overlay.classList.add('flex');
+                body.style.overflow = 'hidden'; // Stop background scrolling
+            }
+        }
+
+        function closeReader() {
+            const overlay = document.getElementById('readerOverlay');
+            const body = document.body;
+            
+            overlay.classList.add('hidden');
+            overlay.classList.remove('flex');
+            body.style.overflow = 'auto'; // Resume scrolling
+        }
+
+        // Close reader if clicking outside the paper
+        document.getElementById('readerOverlay').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeReader();
+            }
+        });
+
+        // Mobile Menu Logic
+        const menuBtn = document.getElementById('menuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+
+        menuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Smooth Scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                mobileMenu.classList.add('hidden'); // Close menu on click
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+    </script>
+</body>
+</html>
